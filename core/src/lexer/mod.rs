@@ -32,8 +32,8 @@ impl Lexer {
         }
         string
     }
-    fn read_number(&mut self) -> String {
-        let mut number = String::new();
+    fn read_number(&mut self, c: char) -> String {
+        let mut number = String::from(c);
         while let Some(c) = self.peek() {
             if c.is_ascii_digit() {
                 number.push(self.next().unwrap());
@@ -43,8 +43,8 @@ impl Lexer {
         }
         number
     }
-    fn read_identifier(&mut self) -> String {
-        let mut identifier = String::new();
+    fn read_identifier(&mut self, c: char) -> String {
+        let mut identifier = String::from(c);
         while let Some(c) = self.peek() {
             if c.is_ascii_alphanumeric() || c == &'_' {
                 identifier.push(self.next().unwrap());
@@ -191,8 +191,12 @@ impl Lexer {
                 }
                 ' ' | '\r' | '\t' => {}
                 '1'..='9' => {
-                    let number = self.read_number();
+                    let number = self.read_number(c);
                     self.tokens.push(Token::new(Number(number), self.line));
+                },
+                'a'..='z' | 'A'..='Z' => {
+                    let identifier = self.read_identifier(c);
+                    self.tokens.push(Token::new(Identifier(identifier), self.line));
                 }
                 _ => todo!(),
             }
