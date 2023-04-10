@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 #[allow(non_camel_case_types, dead_code)]
 pub enum TokenType {

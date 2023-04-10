@@ -1,7 +1,7 @@
+#![allow(dead_code)]
 mod tokentype;
 use tokentype::Token;
 use tokentype::TokenType;
-
 //create a lexer struct that uses peekable iterator for the source code
 pub struct Lexer {
     source: std::iter::Peekable<std::str::Chars<'static>>,
