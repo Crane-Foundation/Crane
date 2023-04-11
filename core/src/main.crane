@@ -1,1 +1,3 @@
-pr:int("Hello world!")
+def main(List<Str> args) {
+  std.println("Hello world!")
+}
