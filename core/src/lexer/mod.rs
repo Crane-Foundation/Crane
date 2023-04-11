@@ -2,7 +2,11 @@
 mod tokentype;
 use tokentype::Token;
 use tokentype::TokenType;
+mod error;
+use ansi_term::Colour::Red;
+use crate::throw;
 //create a lexer struct that uses peekable iterator for the source code
+#[derive(Debug, Clone)]
 pub struct Lexer {
     source: std::iter::Peekable<std::str::Chars<'static>>,
     line: usize,
@@ -24,11 +28,36 @@ impl Lexer {
     }
     fn read_string(&mut self) -> String {
         let mut string = String::new();
+        let mut last: char = '\0';
         while let Some(c) = self.next() {
+            last = c.clone();
+            if c == '\0' {
+                throw!("Unterminated string", self.line);
+            }
             if c == '"' {
                 break;
             }
+            if c == '\n' {
+                self.line += 1;
+            }
+            if c == '\\' {
+                let c = self.next().unwrap();
+                match c {
+                    'n' => string.push('\n'),
+                    't' => string.push('\t'),
+                    'r' => string.push('\r'),
+                    '0' => string.push('\0'),
+                    '"' => string.push('"'),
+                    '\'' => string.push('\''),
+                    '\\' => string.push('\\'),
+                    _ => string.push(c),
+                }
+                continue;
+            }
             string.push(c);
+        }
+        if last != '"' {
+            throw!("Unterminated string", self.line);
         }
         string
     }
@@ -44,21 +73,57 @@ impl Lexer {
         number
     }
     fn read_identifier(&mut self, c: char) -> String {
+        let line = self.line;
         let mut identifier = String::from(c);
         while let Some(c) = self.peek() {
-            if c.is_ascii_alphanumeric() || c == &'_' {
+            if c == &'(' {
+                break;
+            }
+            if c.is_ascii_alphanumeric() || c == &'_' || c == &'.' {
                 identifier.push(self.next().unwrap());
-            } else {
+            }
+            //if c is a symbol, throw an error
+            else if c.is_ascii_punctuation() {
+                throw!(format!("Invalid character in identifier: '{}'", c), line);
+            }
+             else {
                 break;
             }
         }
         identifier
+    }
+    fn read_char(&mut self) -> char {
+        let c = self.next().unwrap();
+        if c == '\\' {
+            let c = self.next().unwrap();
+            let f = match c {
+                'n' => '\n',
+                't' => '\t',
+                'r' => '\r',
+                '0' => '\0',
+                '"' => '"',
+                '\'' => '\'',
+                '\\' => '\\',
+                _ => {
+                    throw!("Invalid escape character: {}", self.line);
+                }
+            };
+            self.next();
+            f
+        } else {
+            let f = self.next();
+            if f == None || f.unwrap() != '\'' {
+                throw!(format!("Invalid character literal"), self.line);
+            }
+            c
+        }
     }
     pub fn lex(&mut self) {
         while self.peek() != None {
             use TokenType::*;
             let c = self.next().unwrap();
             match c {
+                '\n' => self.line += 1,
                 '(' => self.tokens.push(Token::new(LeftParen, self.line)),
                 ')' => self.tokens.push(Token::new(RightParen, self.line)),
                 '{' => self.tokens.push(Token::new(LeftBrace, self.line)),
@@ -197,8 +262,12 @@ impl Lexer {
                 'a'..='z' | 'A'..='Z' => {
                     let identifier = self.read_identifier(c);
                     self.tokens.push(Token::new(Identifier(identifier), self.line));
-                }
-                _ => todo!(),
+                },
+                '\'' => {
+                    let c = self.read_char();
+                    self.tokens.push(Token::new(Character(c.to_string()), self.line));
+                },
+                _ => {throw!(format!("Unexpected character: {}", c), self.line);}
             }
         }
     }

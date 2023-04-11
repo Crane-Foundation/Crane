@@ -53,15 +53,16 @@ pub enum TokenType {
     Identifier(String),
     Str(String),
     Number(String),
-
+    Character(String),
     Eof,
 }
 impl TokenType {
-    fn unwrap(self) -> Option<String> {
-        match self {
+    pub fn unwrap(&self) -> Option<String> {
+        return match self.clone() {
             TokenType::Identifier(s) => Some(s),
             TokenType::Str(s) => Some(s),
             TokenType::Number(s) => Some(s),
+            TokenType::Character(s) => Some(s),
             _ => None,
         }
     }
