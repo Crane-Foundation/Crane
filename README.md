@@ -25,3 +25,9 @@ def main() -> Void {
 }
 ```
 (No semi colons)
+
+## Contributors
+
+<a href = "https://github.com/Crane-Foundation/Crane/graphs/contributors">
+    <img src = "https://contrib.rocks/image?repo=Crane-Foundation/Crane"/>
+</a>
