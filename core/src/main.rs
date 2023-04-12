@@ -1,6 +1,9 @@
 #[macro_use]
 mod lexer;
+mod parser;
 use std::fs;
+
+
 fn main() {
     let source = fs::read_to_string("main.crane").unwrap();
     let source: &'static str = Box::leak(source.into_boxed_str());

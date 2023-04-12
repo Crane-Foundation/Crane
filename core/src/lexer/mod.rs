@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 mod tokentype;
-use tokentype::Token;
-use tokentype::TokenType;
+pub use tokentype::Token;
+pub use tokentype::TokenType;
 mod error;
 use ansi_term::Colour::Red;
 use crate::throw;
@@ -76,7 +76,7 @@ impl Lexer {
         let line = self.line;
         let mut identifier = String::from(c);
         while let Some(c) = self.peek() {
-            if c == &'(' {
+            if c == &'(' || c == &')' || c == &'{' || c == &'}' || c == &'[' || c == &']' || c == &'<' || c == &'>' || c == &',' ||  c == &';' {
                 break;
             }
             if c.is_ascii_alphanumeric() || c == &'_' || c == &'.' {
