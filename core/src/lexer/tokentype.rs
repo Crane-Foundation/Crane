@@ -51,9 +51,14 @@ pub enum TokenType {
 
     // Literals.
     Identifier(String),
+    True,
+    False,
+    None,
     Str(String),
     Number(String),
     Character(String),
+    Keyword(String),
+    DataType(String),
     Eof,
 }
 impl TokenType {
@@ -63,6 +68,7 @@ impl TokenType {
             TokenType::Str(s) => Some(s),
             TokenType::Number(s) => Some(s),
             TokenType::Character(s) => Some(s),
+            TokenType::Keyword(s) => Some(s),
             _ => None,
         }
     }
