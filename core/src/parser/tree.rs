@@ -10,6 +10,9 @@ pub enum NodeType {
     Comment,
     Unknown,
     Expression,
+    BinaryExpression,
+    UnaryExpression,
+    FunctionCall,
     Err
 }
 //create a node struct

@@ -134,9 +134,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            SubEq
+                            Operator("SubEq".to_string())
                         }
-                        _ => Sub,
+                        _ => Operator("Sub".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 }
@@ -144,9 +144,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            AddEq
+                            Operator("AddEq".to_string())
                         }
-                        _ => Add,
+                        _ => Operator("Add".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -154,9 +154,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            MulEq
+                            Operator("MulEq".to_string())
                         }
-                        _ => Mul,
+                        _ => Operator("Mul".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -164,9 +164,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            DivEq
+                            Operator("DivEq".to_string())
                         }
-                        _ => Div,
+                        _ => Operator("Div".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -174,9 +174,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            ModEq
+                            Operator("ModEq".to_string())
                         }
-                        _ => Mod,
+                        _ => Operator("Mod".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -184,9 +184,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            PowEq
+                            Operator("PowEq".to_string())
                         }
-                        _ => Pow,
+                        _ => Operator("Pow".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -194,9 +194,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            AndEq
+                            Operator("AndEq".to_string())
                         }
-                        _ => And,
+                        _ => Operator("And".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -204,9 +204,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            OrEq
+                            Operator("OrEq".to_string())
                         }
-                        _ => Or,
+                        _ => Operator("Or".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -214,9 +214,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            BangEqual
+                            Operator("NotEq".to_string())
                         }
-                        _ => Bang,
+                        _ => Operator("Not".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -224,9 +224,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            EqualEqual
+                            Operator("EqEq".to_string())
                         }
-                        _ => Equal,
+                        _ => Operator("Eq".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -234,9 +234,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            LessEqual
+                            Operator("LessEq".to_string())
                         }
-                        _ => Less,
+                        _ => Operator("Less".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -244,9 +244,9 @@ impl Lexer {
                     let token_type = match self.peek() {
                         Some(&'=') => {
                             self.next();
-                            GreaterEqual
+                            Operator("GreaterEq".to_string())
                         }
-                        _ => Greater,
+                        _ => Operator("Greater".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
                 },
@@ -261,7 +261,23 @@ impl Lexer {
                 },
                 'a'..='z' | 'A'..='Z' => {
                     let identifier = self.read_identifier(c);
-                    self.tokens.push(Token::new(Identifier(identifier), self.line));
+                    match &*identifier {
+                        "if" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
+                        "else" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
+                        "while" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
+                        "for" => self.tokens.push(Token::new(Keyword(identifier), self.line)),                 
+                        "break" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
+                        "continue" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
+                        "return" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
+                        "def" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
+                        "let" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
+                        "True" => self.tokens.push(Token::new(True, self.line)),
+                        "true" => self.tokens.push(Token::new(True, self.line)),
+                        "False" => self.tokens.push(Token::new(False, self.line)),
+                        "false" => self.tokens.push(Token::new(False, self.line)),
+                        "None" => self.tokens.push(Token::new(None, self.line)),
+                        _ => self.tokens.push(Token::new(Identifier(identifier), self.line)),
+                    }
                 },
                 '\'' => {
                     let c = self.read_char();

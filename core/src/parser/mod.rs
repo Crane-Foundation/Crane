@@ -1,3 +1,4 @@
+#![allow(dead_code, unused_imports)]
 mod tree;
 use crate::lexer::Token;
 use crate::lexer::TokenType;
@@ -52,8 +53,9 @@ impl Parser {
                 //this could be a function call, a variable, or a keyword
                 //check if the next token is a parenthesis
                 if (*self).peek().unwrap().token_type == TokenType::LeftParen {
+                    self.next();
                     //this is a function call
-                    let mut node = Node::new(NodeType::Identifier, Some(s), token.line);
+                    let mut node = Node::new(NodeType::FunctionCall, Some(s), token.line);
                     //parse the arguments
                     let mut args = Vec::new();
                     while let Some(token) = self.next() {
@@ -74,7 +76,17 @@ impl Parser {
                     node
                 }
             }
+            //if the token is an operator, create a node with the operator type, left child, and right child
+            TokenType::Operator(op) => {
+                let node = Node::new(NodeType::Operator, Some(op), token.line);
+                node
+            }
+            TokenType::Keyword(kw) => {
+                let node = Node::new(NodeType::Keyword, Some(kw), token.line);
+                node
+            }
             _ => {
+                println!("{:?}", token.token_type);
                 let node = Node::new(NodeType::Err, None, token.line);
                 node
             }
