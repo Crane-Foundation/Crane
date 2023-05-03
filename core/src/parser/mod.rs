@@ -2,11 +2,11 @@
 mod tree;
 use crate::lexer::Token;
 use crate::lexer::TokenType;
+use crate::throw;
+use ansi_term::Colour::Red;
 use tree::Node;
 use tree::NodeType;
 use tree::Tree;
-use ansi_term::Colour::Red;
-use crate::throw;
 //create a parser struct that uses peekable iterator for the tokens
 #[derive(Debug, Clone)]
 pub struct Parser {
