@@ -1,6 +1,7 @@
 #[macro_use]
 mod lexer;
 mod parser;
+mod compiler;
 use std::fs;
 
 fn main() {
