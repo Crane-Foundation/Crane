@@ -10,6 +10,9 @@ The Crane Foundation is a group of people who believe in making a language that 
 ## Why Crane?
 Crane is a basic language designed to make your codebase readable while still maintaining the power you may get from C or Rust
 
+## How does it work?
+Crane compiled to [CBVM] (https://github.com/sam-buckley/cbvm) bytecode which means it's less portable than an exe but allows cross compilation, cbvm is very fast and efficient and allows easy compilation through its API
+
 ## Contributing
 We are always open to contributions, so just open up a thread and submit a pull request. If we like it and it works we'll merge!
 
@@ -25,6 +28,15 @@ def main() -> Void {
 }
 ```
 (No semi colons)
+
+```py
+def fibo(0) -> Int {0}
+def fibo(1) -> Int {1}
+def fibo(n: Int) -> Int {
+    fibo(n - 1) + fibo(n-2)
+}
+```
+inspired by haskell
 
 ## Contributors
 
