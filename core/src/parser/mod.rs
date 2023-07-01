@@ -41,14 +41,8 @@ impl Parser {
     //parse a token
     fn parse_token(&mut self, token: Token) -> Node {
         match token.token_type {
-            TokenType::Number(f) => {
-                let node = Node::new(NodeType::Number, Some(f), token.line);
-                node
-            }
-            TokenType::Str(s) => {
-                let node = Node::new(NodeType::String, Some(s), token.line);
-                node
-            }
+            TokenType::Number(f) => Node::new(NodeType::Number, Some(f), token.line),
+            TokenType::Str(s) => Node::new(NodeType::String, Some(s), token.line),
             TokenType::Identifier(s) => {
                 //this could be a function call, a variable, or a keyword
                 //check if the next token is a parenthesis
@@ -71,25 +65,13 @@ impl Parser {
                     }
                     node
                 } else {
-                    //this is a variable or a keyword
-                    let node = Node::new(NodeType::Identifier, Some(s), token.line);
-                    node
+                    Node::new(NodeType::Identifier, Some(s), token.line)
                 }
             }
             //if the token is an operator, create a node with the operator type, left child, and right child
-            TokenType::Operator(op) => {
-                let node = Node::new(NodeType::Operator, Some(op), token.line);
-                node
-            }
-            TokenType::Keyword(kw) => {
-                let node = Node::new(NodeType::Keyword, Some(kw), token.line);
-                node
-            }
-            _ => {
-                println!("{:?}", token.token_type);
-                let node = Node::new(NodeType::Err, None, token.line);
-                node
-            }
+            TokenType::Operator(op) => Node::new(NodeType::Operator, Some(op), token.line),
+            TokenType::Keyword(kw) => Node::new(NodeType::Keyword, Some(kw), token.line),
+            _ => Node::new(NodeType::Err, None, token.line),
         }
     }
 }

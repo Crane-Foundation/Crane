@@ -1,19 +1,19 @@
 #[allow(unused_imports)]
 use cbvm::{
-    builder::{
-        bytes::{ByteStream, Byte},
-    },
+    builder::bytes::{Byte, ByteStream},
+    byte,
     bytecode::{
         data::ByteData,
         ops::ArgType::*,
         ops::Operations::*,
         types::Types::{self, *},
     },
+    constant,
     engine::{
         memory::{Heap, Stack},
         Engine,
     },
-    byte, stream, op, constant, typed
+    op, stream, typed,
 };
 
 pub struct Int {
@@ -21,7 +21,10 @@ pub struct Int {
 }
 impl From<Int> for Byte {
     fn from(int: Int) -> Self {
-        let data: u64 = int.value.try_into().unwrap_or((int.value as i128 & 0xFFFFFFFFFFFFFFFF) as u64);
+        let data: u64 = int
+            .value
+            .try_into()
+            .unwrap_or((int.value as i128 & 0xFFFFFFFFFFFFFFFF) as u64);
         Byte {
             pos: 0,
             tp: TypeI64,
@@ -53,8 +56,9 @@ impl Float {
     pub fn new(value: f64) -> Self {
         Self { value }
     }
-    pub fn mkstream (&self) -> ByteStream {
-        ByteStream::new().emit(op!(PUSH))
+    pub fn mkstream(&self) -> ByteStream {
+        ByteStream::new()
+            .emit(op!(PUSH))
             .emitstream(stream!((TypeF64, self.value.to_bits())))
     }
 }
@@ -80,20 +84,44 @@ impl Str {
     }
     pub fn mkstream(&self) -> ByteStream {
         let mut stream = ByteStream::new();
-        stream = stream.emit(op!(ALLOC))
-            .emitstream(stream!(
-                (TypeReg, 0x1),
-                (TypeU8, self.value.len() as u64)
-            ));
-        let mut bytes = self.value.as_bytes().chunks(8);
-        while let Some(byte) = bytes.next() {
+        stream = stream
+            .emit(op!(ALLOC))
+            .emitstream(stream!((TypeReg, 0x1), (TypeU8, self.value.len() as u64)));
+        let bytes = self.value.as_bytes().chunks(8);
+        for byte in bytes {
             let mut data: u64 = 0;
             for (i, byte) in byte.iter().enumerate() {
                 data |= (*byte as u64) << (i * 8);
             }
-            stream = stream.emit(op!(STORE))
+            stream = stream
+                .emit(op!(STORE))
                 .emitstream(stream!((TypeU8, 0x1), (TypeU64, data)));
         }
         stream
+    }
+}
+pub trait CraneType {
+    type New;
+    fn mkstream(&self) -> ByteStream;
+    fn new<T>(value: T) -> Self;
+}
+
+pub struct Bool {
+    pub data: u8,
+}
+impl From<bool> for Bool {
+    fn from(b: bool) -> Bool {
+        Bool { data: b as u8 }
+    }
+}
+#[allow(dead_code)]
+impl Bool {
+    pub fn new(d: bool) -> Self {
+        Bool { data: d as u8 }
+    }
+    pub fn mkstream(&self) -> ByteStream {
+        ByteStream::new()
+            .emit(op!(PUSH))
+            .emitstream(stream!((TypeU8, self.data as u64)))
     }
 }

@@ -25,7 +25,7 @@ pub enum TokenType {
 }
 impl TokenType {
     pub fn unwrap(&self) -> Option<String> {
-        return match self.clone() {
+        match self.clone() {
             TokenType::Identifier(s) => Some(s),
             TokenType::Str(s) => Some(s),
             TokenType::Number(s) => Some(s),

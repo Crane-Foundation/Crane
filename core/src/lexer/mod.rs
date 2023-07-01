@@ -3,8 +3,8 @@ mod tokentype;
 pub use tokentype::Token;
 pub use tokentype::TokenType;
 mod error;
-use ansi_term::Colour::Red;
 use crate::throw;
+use ansi_term::Colour::Red;
 //create a lexer struct that uses peekable iterator for the source code
 #[derive(Debug, Clone)]
 pub struct Lexer {
@@ -30,7 +30,7 @@ impl Lexer {
         let mut string = String::new();
         let mut last: char = '\0';
         while let Some(c) = self.next() {
-            last = c.clone();
+            last = c;
             if c == '\0' {
                 throw!("Unterminated string", self.line);
             }
@@ -76,7 +76,17 @@ impl Lexer {
         let line = self.line;
         let mut identifier = String::from(c);
         while let Some(c) = self.peek() {
-            if c == &'(' || c == &')' || c == &'{' || c == &'}' || c == &'[' || c == &']' || c == &'<' || c == &'>' || c == &',' ||  c == &';' {
+            if c == &'('
+                || c == &')'
+                || c == &'{'
+                || c == &'}'
+                || c == &'['
+                || c == &']'
+                || c == &'<'
+                || c == &'>'
+                || c == &','
+                || c == &';'
+            {
                 break;
             }
             if c.is_ascii_alphanumeric() || c == &'_' || c == &'.' {
@@ -85,8 +95,7 @@ impl Lexer {
             //if c is a symbol, throw an error
             else if c.is_ascii_punctuation() {
                 throw!(format!("Invalid character in identifier: '{}'", c), line);
-            }
-             else {
+            } else {
                 break;
             }
         }
@@ -112,14 +121,14 @@ impl Lexer {
             f
         } else {
             let f = self.next();
-            if f == None || f.unwrap() != '\'' {
+            if f.is_none() || f.unwrap() != '\'' {
                 throw!(format!("Invalid character literal"), self.line);
             }
             c
         }
     }
     pub fn lex(&mut self) {
-        while self.peek() != None {
+        while self.peek().is_some() {
             use TokenType::*;
             let c = self.next().unwrap();
             match c {
@@ -149,7 +158,7 @@ impl Lexer {
                         _ => Operator("Add".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '*' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -159,7 +168,7 @@ impl Lexer {
                         _ => Operator("Mul".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '/' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -169,7 +178,7 @@ impl Lexer {
                         _ => Operator("Div".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '%' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -179,7 +188,7 @@ impl Lexer {
                         _ => Operator("Mod".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '^' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -189,7 +198,7 @@ impl Lexer {
                         _ => Operator("Pow".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '&' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -199,7 +208,7 @@ impl Lexer {
                         _ => Operator("And".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '|' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -209,7 +218,7 @@ impl Lexer {
                         _ => Operator("Or".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '!' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -219,7 +228,7 @@ impl Lexer {
                         _ => Operator("Not".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '=' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -229,7 +238,7 @@ impl Lexer {
                         _ => Operator("Eq".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '<' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -239,7 +248,7 @@ impl Lexer {
                         _ => Operator("Less".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '>' => {
                     let token_type = match self.peek() {
                         Some(&'=') => {
@@ -249,7 +258,7 @@ impl Lexer {
                         _ => Operator("Greater".to_string()),
                     };
                     self.tokens.push(Token::new(token_type, self.line));
-                },
+                }
                 '"' => {
                     let string = self.read_string();
                     self.tokens.push(Token::new(Str(string), self.line));
@@ -258,14 +267,14 @@ impl Lexer {
                 '1'..='9' => {
                     let number = self.read_number(c);
                     self.tokens.push(Token::new(Number(number), self.line));
-                },
+                }
                 'a'..='z' | 'A'..='Z' => {
                     let identifier = self.read_identifier(c);
                     match &*identifier {
                         "if" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
                         "else" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
                         "while" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
-                        "for" => self.tokens.push(Token::new(Keyword(identifier), self.line)),                 
+                        "for" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
                         "break" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
                         "continue" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
                         "return" => self.tokens.push(Token::new(Keyword(identifier), self.line)),
@@ -276,14 +285,19 @@ impl Lexer {
                         "False" => self.tokens.push(Token::new(False, self.line)),
                         "false" => self.tokens.push(Token::new(False, self.line)),
                         "None" => self.tokens.push(Token::new(None, self.line)),
-                        _ => self.tokens.push(Token::new(Identifier(identifier), self.line)),
+                        _ => self
+                            .tokens
+                            .push(Token::new(Identifier(identifier), self.line)),
                     }
-                },
+                }
                 '\'' => {
                     let c = self.read_char();
-                    self.tokens.push(Token::new(Character(c.to_string()), self.line));
-                },
-                _ => {throw!(format!("Unexpected character: {}", c), self.line);}
+                    self.tokens
+                        .push(Token::new(Character(c.to_string()), self.line));
+                }
+                _ => {
+                    throw!(format!("Unexpected character: {}", c), self.line);
+                }
             }
         }
     }
