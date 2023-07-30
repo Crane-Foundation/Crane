@@ -13,9 +13,9 @@ dependencies = [
 
 [[package]]
 name = "cbvm"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "379c5ca47bf535edf099a19a8c96ac1d1bf65971c448f6a44a8a76b4e4b7ce54"
+checksum = "c2a676afaf75a60a1dddd450e83baafc648ef74323cc2be80905fa2c36e7d1c0"
 
 [[package]]
 name = "core"
