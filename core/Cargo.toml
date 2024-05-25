@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 ansi_term = "0.12.1"
-cbvm = "0.1.3"
+cbvm = "0.5.8"
