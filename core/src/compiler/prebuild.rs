@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 extern crate cbvm;
 use crate::compiler::types;
 #[allow(unused_imports)]
@@ -29,7 +30,20 @@ type Streams = Vec<ByteStream>;
 #[allow(dead_code)]
 pub struct Constants {
     ptr: Ptr,
-    stream: Streams,
+    stream: ByteStream,
+}
+
+impl Constants {
+    pub fn new() -> Self {
+        Constants {
+            ptr: 0,
+            stream: ByteStream::new(),
+        }
+    }
+    pub fn add(&mut self, c: ConstantType) -> Option<()> {
+        self.stream.emitstream(c.mkstream());
+        Some(())
+    }
 }
 
 #[allow(dead_code)]

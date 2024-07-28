@@ -10,10 +10,11 @@ pub enum NodeType {
     Comment,
     Unknown,
     Expression,
-    BinaryExpression,
     UnaryExpression,
     FunctionCall,
-    Err
+    Err,
+    Assignment,
+    Reassignment
 }
 //create a node struct
 #[derive(Debug, Clone)]
