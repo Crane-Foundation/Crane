@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 mod tokentype;
+use std::process;
+use std::collections::HashMap;
 pub use tokentype::Token;
 pub use tokentype::TokenType;
 mod error;
@@ -86,6 +88,12 @@ impl Lexer {
                 || c == &'>'
                 || c == &','
                 || c == &';'
+                || c == &'='
+                || c == &':'
+                || c == &'+'
+                || c == &'-'
+                || c == &'*'
+                || c == &'/'
             {
                 break;
             }
@@ -94,6 +102,9 @@ impl Lexer {
             }
             //if c is a symbol, throw an error
             else if c.is_ascii_punctuation() {
+                if c == &'"' {
+                    throw!("Unterminated String", line);
+                }
                 throw!(format!("Invalid character in identifier: '{}'", c), line);
             } else {
                 break;
@@ -300,5 +311,93 @@ impl Lexer {
                 }
             }
         }
+        self.tokens.push(Token::new(TokenType::Eof, self.line));
+        check_for_unclosed_brackets(&self.tokens);
+    }
+}
+
+//fn check_for_unclosed_brackets(tokens: &Vec<Token>) {
+//this function checks for unclosed brackets, braces, and parentheses, error for every single unclosed bracket
+//use a hashmap to store the line number of the opening bracket
+//use another hashmap to store the line number of the closing bracket
+//if the closing bracket is empty, throw an error for the opening bracket
+//if the opening bracket is empty, throw an error for the closing bracketwuse std::collections::HashMap;
+fn check_for_unclosed_brackets(tokens: &Vec<Token>) {
+    let mut left_paren_count = 0;
+    let mut right_paren_count = 0;
+    let mut left_paren_lines = Vec::new();
+    let mut right_paren_lines = Vec::new();
+
+    let mut left_brace_count = 0;
+    let mut right_brace_count = 0;
+    let mut left_brace_lines = Vec::new();
+    let mut right_brace_lines = Vec::new();
+
+    let mut err: Result<(), ()> = Ok(());
+
+    for token in tokens {
+        match token.token_type {
+            TokenType::LeftParen => {
+                left_paren_count += 1;
+                left_paren_lines.push(token.line);
+            }
+            TokenType::RightParen => {
+                right_paren_count += 1;
+                right_paren_lines.push(token.line);
+            }
+            TokenType::LeftBrace => {
+                left_brace_count += 1;
+                left_brace_lines.push(token.line);
+            }
+            TokenType::RightBrace => {
+                right_brace_count += 1;
+                right_brace_lines.push(token.line);
+            }
+            _ => {}
+        }
+    }
+
+    // Check for unclosed parentheses
+    if left_paren_count != right_paren_count {
+        let unclosed_count = left_paren_count - right_paren_count;
+        if unclosed_count > 0 {
+            for _ in 0..unclosed_count {
+                if let Some(line) = left_paren_lines.pop() {
+                    throw!(format!("Unclosed '(' at line {}", line), line, false);
+                    err = Err(());
+                }
+            }
+        } else {
+            for _ in 0..-unclosed_count {
+                if let Some(line) = right_paren_lines.pop() {
+                    throw!(format!("Unclosed ')' at line {}", line), line, false);
+                    err = Err(());
+                }
+            }
+        }
+    }
+
+    // Check for unclosed braces
+    if left_brace_count != right_brace_count {
+        let unclosed_count = left_brace_count - right_brace_count;
+        if unclosed_count > 0 {
+            for _ in 0..unclosed_count {
+                if let Some(line) = left_brace_lines.pop() {
+                    throw!(format!("Unclosed '{{' at line {}", line), line, false);
+                    err = Err(());
+                }
+            }
+        } else {
+            for _ in 0..-unclosed_count {
+                if let Some(line) = right_brace_lines.pop() {
+                    throw!(format!("Unclosed '}}' at line {}", line), line, false);
+                    err = Err(());
+                }
+            }
+        }
+    }
+
+    if err == Err(()) {
+        process::exit(0);
     }
 }

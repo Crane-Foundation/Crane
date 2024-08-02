@@ -13,3 +13,4 @@ fn main() {
     parser.parse();
     println!("{:#?}", parser.tree);
 }
+fn drop<T>(_: T) {}

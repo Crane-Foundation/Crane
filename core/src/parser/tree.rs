@@ -14,7 +14,11 @@ pub enum NodeType {
     FunctionCall,
     Err,
     Assignment,
-    Reassignment
+    Reassignment,
+    Function,
+    Block,
+    Loop,
+    Conditional,
 }
 //create a node struct
 #[derive(Debug, Clone)]
