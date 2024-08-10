@@ -2,44 +2,33 @@
 ![Crane Banner](pictures/Crane4%20(2)%20(4).jpg)  
 Welcome to the official repo for the Crane language
 [Crane Community](https://discord.gg/mKPdeUnCmG)
+# Crane Programming Language
 
+## Overview
 
-## Who are we?
-The Crane Foundation is a group of people who believe in making a language that is both simple and efficient in design.
+**Crane** is a statically typed, mid-level programming language designed for general-purpose use. It is known for its portability and ease of embedding into other systems. Crane is compiled to **CraneVM**, a virtual machine designed to execute Crane bytecode efficiently.
 
-## Why Crane?
-Crane is a basic language designed to make your codebase readable while still maintaining the power you may get from C or Rust
+## Features
 
-## How does it work?
-Crane compiled to [CBVM] (https://github.com/sam-buckley/cbvm) bytecode which means it's less portable than an exe but allows cross compilation, cbvm is very fast and efficient and allows easy compilation through its API
+- **Statically Typed:** Crane enforces type safety at compile time, reducing runtime errors and improving code reliability.
+- **Mid-Level Language:** Offers a balance between high-level abstractions and low-level control, making it suitable for a wide range of applications.
+- **General Purpose:** Can be used for a variety of programming tasks, from system programming to application development.
+- **Embedded & Portable:** Easily embedded into other systems and highly portable across different platforms.
 
-## Contributing
-We are always open to contributions, so just open up a thread and submit a pull request. If we like it and it works we'll merge!
+## Compilation to CraneVM
 
-## Docs
-The docs are a WIP and this will be updated once available
+Crane code is compiled into bytecode that is executed by the [CraneVM](https://github.com/crane-foundation/cranevm). The compilation process ensures that Crane code can run efficiently and safely, while using minimal resources and time.
 
-# Syntax
-Crane syntax is C styled with aspects of Rust, Python and ruby
+## Use Cases
 
-```rb
-def main() -> Void {
-  std.println("Hello world!")
-}
+Crane is suitable for:
+
+- Developing system software and applications where performance and portability are crucial.
+- Embedding into other software systems to provide scripting capabilities or custom logic.
+- Writing portable code that can run on various hardware and operating systems.
+
+# Building
+
 ```
-(No semi colons)
-
-```py
-def fibo(0) -> Int {0}
-def fibo(1) -> Int {1}
-def fibo(n: Int) -> Int {
-    fibo(n - 1) + fibo(n-2)
-}
+cargo install feathers
 ```
-inspired by haskell
-
-## Contributors
-
-<a href = "https://github.com/Crane-Foundation/Crane/graphs/contributors">
-    <img src = "https://contrib.rocks/image?repo=Crane-Foundation/Crane"/>
-</a>
