@@ -2,7 +2,15 @@
 mod lexer;
 mod compiler;
 mod parser;
-use std::fs;
+use std::{arch::x86_64, fs};
+
+fn double(x: i32) -> i32 {
+    x * 2
+}
+
+fn println<T: std::fmt::Display>(x: T) {
+    println!("{}", x);
+}
 
 fn main() {
     let source = fs::read_to_string("main.crane").unwrap();
